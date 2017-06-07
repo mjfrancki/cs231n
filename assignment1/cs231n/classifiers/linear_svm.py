@@ -80,7 +80,12 @@ def svm_loss_vectorized(W, X, y, reg):
   # to reuse some of the intermediate values that you used to compute the     #
   # loss.                                                                     #
   #############################################################################
-  pass
+  Gmargins = np.zeros(margins.shape)
+  Gmargins[margins>0] = 1
+  dW = X.T.dot(Gmargins)
+  dW /= X.shape[0] 
+  dW += reg * W  - 1
+    
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################

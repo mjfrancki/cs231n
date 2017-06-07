@@ -30,7 +30,15 @@ def softmax_loss_naive(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  #num_examples = X.shape[0]
+
+  # get unnormalized probabilities
+
+  #exp_scores = np.exp(scores)
+
+  # normalize them for each example
+  #probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)  
+    
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
@@ -47,17 +55,20 @@ def softmax_loss_vectorized(W, X, y, reg):
   # Initialize the loss and gradient to zero.
   loss = 0.0
   dW = np.zeros_like(W)
+    
+  num_examples = X.shape[0]  
+    
+    
+  scores = np.dot(X,W)
+  exp_scores = np.exp(scores)
+  probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+  corect_logprobs = -np.log(probs[range(num_examples),y])
+  data_loss = np.sum(corect_logprobs)/num_examples
+  reg_loss = 0.5*reg*np.sum(W*W)
+  loss = data_loss + reg_loss  
+    
 
-  #############################################################################
-  # TODO: Compute the softmax loss and its gradient using no explicit loops.  #
-  # Store the loss in loss and the gradient in dW. If you are not careful     #
-  # here, it is easy to run into numeric instability. Don't forget the        #
-  # regularization!                                                           #
-  #############################################################################
-  pass
-  #############################################################################
-  #                          END OF YOUR CODE                                 #
-  #############################################################################
+
 
   return loss, dW
 
