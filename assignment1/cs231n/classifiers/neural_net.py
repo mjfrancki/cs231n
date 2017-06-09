@@ -71,18 +71,11 @@ class TwoLayerNet(object):
 
     # Compute the forward pass
     scores = None
-    #############################################################################
-    # TODO: Perform the forward pass, computing the class scores for the input. #
-    # Store the result in the scores variable, which should be an array of      #
-    # shape (N, C).                                                             #
-    #############################################################################
-    
+   
+    #scores
     scores = (np.maximum(0, X.dot(W1) + b1)).dot(W2) + b2
     
-    #############################################################################
-    #                              END OF YOUR CODE                             #
-    #############################################################################
-    
+  
     # If the targets are not given then jump out, we're done
     if y is None:
       return scores
@@ -95,15 +88,13 @@ class TwoLayerNet(object):
     # in the variable loss, which should be a scalar. Use the Softmax           #
     # classifier loss.                                                          #
     #############################################################################
-    print(scores)
-   
-
-    loss = np.square(scores.T - y).sum()
-    loss /= N
-    loss +=  0.5* reg * (np.sum(W1 * W1) + np.sum(W2 * W2))
+ 
+    probs = np.exp(scores) / np.sum(np.exp(scores), axis=1, keepdims=True)
+    corect_logprobs = -np.log(probs[range(N), y])
     
-    
-    
+    loss = np.sum(corect_logprobs) / N
+    loss +=  0.5* reg * ( np.sum(W1 * W1) + np.sum(W2 * W2) )
+ 
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
@@ -116,14 +107,38 @@ class TwoLayerNet(object):
     # grads['W1'] should store the gradient on W1, and be a matrix of same size #
     #############################################################################
     probs = np.exp(scores) / np.sum(np.exp(scores), axis=1, keepdims=True)
-    print(probs)
     
-    grads['W2'] = np.maximum(0, X.dot(W1) + b1) + reg * W2 
-    grads['W1'] = reg * W1 
- 
-    grads['b1'] = np.sum(probs.dot(W2.T), axis = 0) 
-    grads['b2'] = np.sum(probs, axis = 0) 
+    dscores = probs
+    dscores[range(len(y)), y] -= 1
+    dscores /= len(y)
+   
     
+    #hidden_layer.T.dot(dscores)
+    #print( ( X.T.dot(np.dot(dscores, W2.T) X.dot(W2) + b2)) ).shape )
+    #hidden_layer.T.dot(dscores)
+    
+    #print( ( np.dot(np.maximum(0, ( np.dot(X,W1) + b1) ).T, dscores) ).shape )
+   
+    #print(   (reg * W2).shape )
+   
+    # X.T.dot(np.maximum(0, X.dot(W1) + b1)) 
+    #XdotW1b = X.dot(W1) + b1 
+   
+    
+    
+    #hidden layer
+    grads['W2']  = np.dot( np.maximum(0,  X.dot(W1) + b1  ).T , dscores )  +  (reg * W2)                     
+    grads['b2']  = np.sum(probs, axis=0)   
+    
+    #reLU
+    hidden = np.maximum(0, np.dot(dscores, W2.T))
+                          
+    grads['W1']  = np.dot( X.T ,  hidden ) + (reg * W1)                         
+    grads['b1'] = np.sum( hidden , axis = 0) 
+    
+    
+    
+                         
     
     
     #############################################################################
