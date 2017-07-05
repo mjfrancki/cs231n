@@ -86,14 +86,15 @@ class KNearestNeighbor(object):
         train = self.X_train
         test = X
 
-
         a = test
         b = train
 
         sumAsq = np.sum(np.square(a), axis = 1)
         sumBsq = np.sum(np.square(b), axis = 1)
         dotAB  =  - 2*np.dot(a,b.T)
-
+        
+        
+        #sum (A-B)^2 = sum A^2 - 2 A.B + sum B^2 
         dists = dotAB + sumBsq + np.transpose([sumAsq])
         return dists
 

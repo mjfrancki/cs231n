@@ -68,7 +68,7 @@ def svm_loss_vectorized(W, X, y, reg):
   
   loss = np.sum(margins)
   loss /=  X.shape[0] 
-  loss += reg * np.sum(W * W)-1  
+  loss += 0.5 * reg * np.sum(W * W) 
  
 
   #############################################################################
@@ -80,11 +80,18 @@ def svm_loss_vectorized(W, X, y, reg):
   # to reuse some of the intermediate values that you used to compute the     #
   # loss.                                                                     #
   #############################################################################
-  Gmargins = np.zeros(margins.shape)
-  Gmargins[margins>0] = 1
-  dW = X.T.dot(Gmargins)
+  #https://bruceoutdoors.wordpress.com/2016/05/06/cs231n-assignment-1-tutorial-q2-   training-a-support-vector-machine/
+    
+  mask = np.zeros(margins.shape)
+  mask[margins>0] = 1
+    
+  incorrect_counts = np.sum(mask, axis=1)  
+   
+  mask[np.arange(X.shape[0]), y] = -incorrect_counts
+    
+  dW = np.dot(X.T, mask)
   dW /= X.shape[0] 
-  dW += reg * W  - 1
+  dW += reg * W  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
