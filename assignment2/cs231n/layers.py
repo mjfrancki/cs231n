@@ -185,8 +185,11 @@ def batchnorm_forward(x, gamma, beta, bn_param):
     mode = bn_param['mode']
     eps = bn_param.get('eps', 1e-5)
     momentum = bn_param.get('momentum', 0.9)
+    
+    print(x.shape)
+    N,D = x.shape
 
-    N, D = x.shape
+    #N, D = x.shape
     running_mean = bn_param.get('running_mean', np.zeros(D, dtype=x.dtype))
     running_var = bn_param.get('running_var', np.zeros(D, dtype=x.dtype))
 
@@ -207,7 +210,8 @@ def batchnorm_forward(x, gamma, beta, bn_param):
         # variance, storing your result in the running_mean and running_var   #
         # variables.                                                          #
         #######################################################################
-        N, D = x.shape
+        #N, D = x.shape
+        N,D = x.shape
 
         #step1: calculate mean
         mu = 1./N * np.sum(x, axis = 0)
